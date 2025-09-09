@@ -1,4 +1,4 @@
-
+"use client";
 
 import { Socials } from "@/constants";
 import Image from "next/image";

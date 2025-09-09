@@ -1,25 +1,22 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/main/Navbar";
-import Footer from "@/components/main/Footer";
-import CursorTrail from "@/components/CursorTrail";
-
-// Client-only component import
-import StarsCanvas from "@/components/main/StarBackground";
+import dynamic from "next/dynamic";
 
 const inter = Inter({ subsets: ["latin"] });
+
+// Client-only components
+const Navbar = dynamic(() => import("@/components/main/Navbar"), { ssr: false });
+const Footer = dynamic(() => import("@/components/main/Footer"), { ssr: false });
+const CursorTrail = dynamic(() => import("@/components/CursorTrail"), { ssr: false });
+const StarsCanvas = dynamic(() => import("@/components/main/StarBackground"), { ssr: false });
 
 export const metadata: Metadata = {
   title: "İnovatif 360",
   description: "İnovatif 360",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body
