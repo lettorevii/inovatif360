@@ -1,10 +1,9 @@
-import dynamic from "next/dynamic";
-import Image from "next/image";
+"use client"; // Bu sayfa client component olarak çalışacak
 
-const Hero = dynamic(() => import("@/components/main/Hero"), { ssr: false });
-const Skills = dynamic(() => import("@/components/main/Skills"), { ssr: false });
-const Encryption = dynamic(() => import("@/components/main/Encryption"), { ssr: false });
-const Projects = dynamic(() => import("@/components/main/Projects"), { ssr: false });
+import Hero from "@/components/main/Hero";
+import Skills from "@/components/main/Skills";
+import Encryption from "@/components/main/Encryption";
+import Projects from "@/components/main/Projects";
 
 export default function Home() {
   return (
