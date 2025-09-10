@@ -23,130 +23,153 @@ import { Typewriter } from "react-simple-typewriter";
 gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
 const HeroContent = () => {
+  const [isClient, setIsClient] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
   const heroRef = useRef<HTMLDivElement>(null);
   const splineRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLAnchorElement>(null);
   const floatingElementsRef = useRef<HTMLDivElement>(null);
   const orbRef = useRef<HTMLDivElement>(null);
-  const mouseFollowerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Ana arka plan animasyonu
-      gsap.to(".bg-gradient-animated", {
-        backgroundPosition: "200% 200%",
-        duration: 8,
-        repeat: -1,
-        yoyo: true,
-        ease: "power2.inOut",
-      });
+    setIsClient(true);
+  }, []);
 
-      // Floating particles - daha karmaşık hareket
-      gsap.timeline({ repeat: -1 })
-        .to(".floating-particle", {
-          y: -50,
-          x: 30,
-          rotation: 180,
-          scale: 1.2,
-          duration: 4,
-          stagger: 0.3,
-          ease: "power2.inOut",
-        })
-        .to(".floating-particle", {
-          y: 30,
-          x: -20,
-          rotation: 360,
-          scale: 0.8,
-          duration: 3,
-          stagger: 0.2,
+  useEffect(() => {
+    if (!isClient) return;
+
+    const ctx = gsap.context(() => {
+      // Ana arka plan animasyonu - class kontrol et
+      const bgElement = document.querySelector(".bg-gradient-animated");
+      if (bgElement) {
+        gsap.to(".bg-gradient-animated", {
+          backgroundPosition: "200% 200%",
+          duration: 8,
+          repeat: -1,
+          yoyo: true,
           ease: "power2.inOut",
         });
+      }
 
-      // Orb animasyonu
-      gsap.to(orbRef.current, {
-        scale: 1.5,
-        opacity: 0.3,
-        duration: 3,
-        repeat: -1,
-        yoyo: true,
-        ease: "power2.inOut",
-      });
+      // Floating particles - kontrol ekle
+      const particles = document.querySelectorAll(".floating-particle");
+      if (particles.length > 0) {
+        gsap.timeline({ repeat: -1 })
+          .to(".floating-particle", {
+            y: -50,
+            x: 30,
+            rotation: 180,
+            scale: 1.2,
+            duration: 4,
+            stagger: 0.3,
+            ease: "power2.inOut",
+          })
+          .to(".floating-particle", {
+            y: 30,
+            x: -20,
+            rotation: 360,
+            scale: 0.8,
+            duration: 3,
+            stagger: 0.2,
+            ease: "power2.inOut",
+          });
+      }
+
+      // Orb animasyonu - null kontrol
+      if (orbRef.current) {
+        gsap.to(orbRef.current, {
+          scale: 1.5,
+          opacity: 0.3,
+          duration: 3,
+          repeat: -1,
+          yoyo: true,
+          ease: "power2.inOut",
+        });
+      }
 
       // Yazı karakterlerini tek tek animasyonla gösterme
-      gsap.fromTo(".letter",
-        {
-          y: 50,
-          opacity: 0,
-          rotateX: -90
-        },
-        {
-          y: 0,
-          opacity: 1,
-          rotateX: 0,
-          duration: 0.5,
-          stagger: 0.05,
-          ease: "back.out(1.7)",
-          scrollTrigger: {
-            trigger: textRef.current,
-            start: "top 80%",
+      const letters = document.querySelectorAll(".letter");
+      if (letters.length > 0) {
+        gsap.fromTo(".letter",
+          {
+            y: 50,
+            opacity: 0,
+            rotateX: -90
+          },
+          {
+            y: 0,
+            opacity: 1,
+            rotateX: 0,
+            duration: 0.5,
+            stagger: 0.05,
+            ease: "back.out(1.7)",
+            scrollTrigger: {
+              trigger: textRef.current,
+              start: "top 80%",
+            }
           }
-        }
-      );
+        );
+      }
 
       // Glow efekti pulse
-      gsap.timeline({ repeat: -1 })
-        .to(".glow-effect", {
-          scale: 1.1,
-          opacity: 0.4,
-          duration: 2,
-          ease: "power2.inOut",
-        })
-        .to(".glow-effect", {
-          scale: 1.3,
-          opacity: 0.1,
-          duration: 2,
-          ease: "power2.inOut",
-        });
+      const glowElements = document.querySelectorAll(".glow-effect");
+      if (glowElements.length > 0) {
+        gsap.timeline({ repeat: -1 })
+          .to(".glow-effect", {
+            scale: 1.1,
+            opacity: 0.4,
+            duration: 2,
+            ease: "power2.inOut",
+          })
+          .to(".glow-effect", {
+            scale: 1.3,
+            opacity: 0.1,
+            duration: 2,
+            ease: "power2.inOut",
+          });
+      }
 
       // Mouse follower animasyonu
       const handleMouseMove = (e: MouseEvent) => {
-        gsap.to(mouseFollowerRef.current, {
-          x: e.clientX - 10,
-          y: e.clientY - 10,
-          duration: 0.3,
-          ease: "power2.out"
-        });
+        setMousePosition({ x: e.clientX, y: e.clientY });
       };
 
       window.addEventListener('mousemove', handleMouseMove);
 
       // Yazı efektleri
-      gsap.timeline({ repeat: -1, delay: 2 })
-        .to(".text-glow", {
-          textShadow: "0 0 20px rgba(168, 85, 247, 0.8)",
-          duration: 1.5,
-          ease: "power2.inOut",
-        })
-        .to(".text-glow", {
-          textShadow: "0 0 40px rgba(236, 72, 153, 0.6)",
-          duration: 1.5,
-          ease: "power2.inOut",
-        })
-        .to(".text-glow", {
-          textShadow: "0 0 60px rgba(59, 130, 246, 0.4)",
-          duration: 1.5,
-          ease: "power2.inOut",
-        });
+      const textGlowElements = document.querySelectorAll(".text-glow");
+      if (textGlowElements.length > 0) {
+        gsap.timeline({ repeat: -1, delay: 2 })
+          .to(".text-glow", {
+            textShadow: "0 0 20px rgba(168, 85, 247, 0.8)",
+            duration: 1.5,
+            ease: "power2.inOut",
+          })
+          .to(".text-glow", {
+            textShadow: "0 0 40px rgba(236, 72, 153, 0.6)",
+            duration: 1.5,
+            ease: "power2.inOut",
+          })
+          .to(".text-glow", {
+            textShadow: "0 0 60px rgba(59, 130, 246, 0.4)",
+            duration: 1.5,
+            ease: "power2.inOut",
+          });
+      }
 
       // Buton dalga efekti
-      gsap.to(".button-wave", {
-        scale: 2,
-        opacity: 0,
-        duration: 2,
-        repeat: -1,
-        ease: "power2.out",
-      });
+      const buttonWaves = document.querySelectorAll(".button-wave");
+      if (buttonWaves.length > 0) {
+        gsap.to(".button-wave", {
+          scale: 2,
+          opacity: 0,
+          duration: 2,
+          repeat: -1,
+          ease: "power2.out",
+        });
+      }
 
       return () => {
         window.removeEventListener('mousemove', handleMouseMove);
@@ -154,50 +177,58 @@ const HeroContent = () => {
     });
 
     return () => ctx.revert();
-  }, []);
+  }, [isClient]);
 
-  // Spline model yüklendiğinde çalışacak fonksiyon - sadece temel ayarlar
+  // Spline model yüklendiğinde çalışacak fonksiyon
   function onLoad(splineApp: any) {
-    const obj = splineApp.findObjectByName("Cube");
-    if (obj) {
-      obj.scale.x = 2;
-      obj.scale.y = 2;
-      obj.scale.z = 2;
-    }
+    try {
+      const obj = splineApp.findObjectByName("Cube");
+      if (obj) {
+        obj.scale.x = 2;
+        obj.scale.y = 2;
+        obj.scale.z = 2;
+      }
 
-    const cam = splineApp.findObjectByName("Camera");
-    if (cam) {
-      cam.position.z = 400;
+      const cam = splineApp.findObjectByName("Camera");
+      if (cam) {
+        cam.position.z = 400;
+      }
+    } catch (error) {
+      console.log("Spline object loading error:", error);
     }
   }
 
   // Button hover animasyonu
   const handleButtonHover = () => {
-    gsap.timeline()
-      .to(buttonRef.current, {
-        scale: 1.05,
-        boxShadow: "0 20px 40px rgba(147, 51, 234, 0.6)",
-        duration: 0.3,
-        ease: "power2.out"
-      })
-      .to(".button-icon", {
-        x: 5,
-        duration: 0.3,
-      }, 0);
+    if (buttonRef.current) {
+      gsap.timeline()
+        .to(buttonRef.current, {
+          scale: 1.05,
+          boxShadow: "0 20px 40px rgba(147, 51, 234, 0.6)",
+          duration: 0.3,
+          ease: "power2.out"
+        })
+        .to(".button-icon", {
+          x: 5,
+          duration: 0.3,
+        }, 0);
+    }
   };
 
   const handleButtonLeave = () => {
-    gsap.timeline()
-      .to(buttonRef.current, {
-        scale: 1,
-        boxShadow: "0 10px 20px rgba(147, 51, 234, 0.3)",
-        duration: 0.3,
-        ease: "power2.out"
-      })
-      .to(".button-icon", {
-        x: 0,
-        duration: 0.3,
-      }, 0);
+    if (buttonRef.current) {
+      gsap.timeline()
+        .to(buttonRef.current, {
+          scale: 1,
+          boxShadow: "0 10px 20px rgba(147, 51, 234, 0.3)",
+          duration: 0.3,
+          ease: "power2.out"
+        })
+        .to(".button-icon", {
+          x: 0,
+          duration: 0.3,
+        }, 0);
+    }
   };
 
   // Yazıyı harflere ayırma fonksiyonu
@@ -209,28 +240,56 @@ const HeroContent = () => {
     ));
   };
 
+  // Client-side render kontrolü
+  if (!isClient) {
+    return (
+      <div className="relative overflow-hidden min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
+        <div className="animate-pulse text-purple-400 flex items-center gap-3">
+          <div className="w-4 h-4 bg-purple-400 rounded-full animate-bounce"></div>
+          <span>Loading...</span>
+          <div className="w-4 h-4 bg-purple-400 rounded-full animate-bounce delay-100"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // Floating particles için sabit değerler
+  const particleData = [
+    { size: 4, color: '#a855f7', left: '10%', top: '20%' },
+    { size: 6, color: '#ec4899', left: '80%', top: '10%' },
+    { size: 8, color: '#3b82f6', left: '20%', top: '70%' },
+    { size: 5, color: '#a855f7', left: '90%', top: '60%' },
+    { size: 7, color: '#ec4899', left: '5%', top: '50%' },
+    { size: 9, color: '#3b82f6', left: '70%', top: '80%' },
+    { size: 4, color: '#a855f7', left: '30%', top: '15%' },
+    { size: 6, color: '#ec4899', left: '85%', top: '40%' },
+    { size: 8, color: '#3b82f6', left: '15%', top: '85%' },
+    { size: 5, color: '#a855f7', left: '60%', top: '25%' },
+    { size: 7, color: '#ec4899', left: '40%', top: '90%' },
+    { size: 9, color: '#3b82f6', left: '75%', top: '5%' }
+  ];
+
   return (
-    <div className="relative overflow-hidden min-h-screen">
+    <div className="relative overflow-hidden min-h-screen bg-gradient-animated">
       {/* Mouse Follower */}
       <div
-        ref={mouseFollowerRef}
-        className="fixed w-5 h-5 bg-purple-400 rounded-full pointer-events-none z-50 opacity-60 blur-sm"
+        className="fixed w-5 h-5 bg-purple-400 rounded-full pointer-events-none z-50 opacity-60 blur-sm transition-all duration-300 ease-out"
+        style={{
+          transform: `translate(${mousePosition.x - 10}px, ${mousePosition.y - 10}px)`
+        }}
       />
-
-      {/* Koyu Mor Animated Background */}
 
       {/* Floating Particles */}
       <div ref={floatingElementsRef} className="absolute inset-0 pointer-events-none">
-        {[...Array(12)].map((_, i) => (
+        {particleData.map((particle, i) => (
           <div
             key={i}
             className="floating-particle absolute rounded-full opacity-40"
             style={{
-              width: `${Math.random() * 8 + 4}px`,
-              height: `${Math.random() * 8 + 4}px`,
-              backgroundColor: ['#a855f7', '#ec4899', '#3b82f6'][i % 3],
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              width: `${particle.size}px`,
+              height: `${particle.size}px`,
+              left: particle.left,
+              top: particle.top,
               animationDelay: `${i * 0.3}s`
             }}
           />
@@ -323,11 +382,9 @@ const HeroContent = () => {
               <div className="absolute inset-0 bg-purple-600/10 scale-0 group-hover:scale-100 transition-transform duration-500 rounded-xl" />
             </motion.button>
           </div>
-
-
         </div>
 
-        {/* Sağ taraf: Spline - Animasyonsuz */}
+        {/* Sağ taraf: Spline */}
         <motion.div
           variants={slideInFromRight(0.8)}
           className="flex-1 flex justify-center items-center relative"
@@ -336,7 +393,7 @@ const HeroContent = () => {
             ref={splineRef}
             className="w-full ml-96 mr-40 max-w-[600px] h-[600px] relative"
           >
-            {/* Spline Container - Sadece statik görünüm */}
+            {/* Spline Container */}
             <div className="w-full h-full rounded-2xl overflow-hidden backdrop-blur-md bg-purple-800/10 shadow-2xl shadow-purple-500/20 border border-purple-500/20">
               <Spline
                 scene="https://prod.spline.design/ZLODGAIRGu5p28Tv/scene.splinecode"
@@ -350,31 +407,11 @@ const HeroContent = () => {
 
       {/* Custom CSS */}
       <style jsx>{`
-        @keyframes gradient-x {
-          0%, 100% {
-            background-size: 200% 200%;
-            background-position: left center;
-          }
-          50% {
-            background-size: 200% 200%;
-            background-position: right center;
-          }
-        }
-        
-        .animate-gradient-x {
-          animation: gradient-x 4s ease infinite;
-        }
-        
-        .bg-gradient-animated {
-          animation: gradient-x 8s ease infinite;
-        }
-        
         .welcome-badge::before {
           content: '';
           position: absolute;
           inset: 0;
           padding: 1px;
-          background: linear-gradient(45deg, #a855f7, #ec4899, #3b82f6, #a855f7);
           border-radius: inherit;
           mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
           mask-composite: exclude;
