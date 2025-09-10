@@ -29,12 +29,7 @@ const Projects = dynamic(() => import('@/components/main/Projects'), {
   </div>
 });
 
-const TestimonialsSphere = dynamic(() => import('@/components/main/TestimonialsSphere'), {
-  ssr: false,
-  loading: () => <div className="h-96 flex items-center justify-center">
-    <div className="animate-pulse text-purple-400">Loading Testimonials...</div>
-  </div>
-});
+
 
 export default function Home() {
   return (
@@ -44,7 +39,6 @@ export default function Home() {
         <Skills />
         <Encryption />
         <Projects />
-        <TestimonialsSphere />
       </div>
     </main>
   );
